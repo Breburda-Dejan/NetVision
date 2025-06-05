@@ -110,11 +110,10 @@ CREATE TABLE switch (
 CREATE TABLE port (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_Switch INT NOT NULL,
-    hostname VARCHAR(255) NOT NULL,
     portname VARCHAR(255) NOT NULL,
     description TEXT,
     portmode VARCHAR(512),
-    FOREIGN KEY (id_Switch, hostname) REFERENCES switch(id_Switch, hostname)
+    FOREIGN KEY (id_Switch) REFERENCES switch(id_Switch)
         ON DELETE CASCADE
         ON UPDATE CASCADE
 );
