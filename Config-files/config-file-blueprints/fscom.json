@@ -1,0 +1,43 @@
+{
+        "block": "!",
+        "check": {
+            "1": "interface",
+            "3": "switchport",
+            "4": "hostname",
+            "5": "GigaEthernet"
+        },
+        "structure": {
+            "1": "spanning-tree",
+            "2": "interface",
+            "3": "vlan"
+        },
+        "prefix": {
+            "vlan": {
+                "id": "vlan",
+                "description": "name",
+                "entrydisc": "",
+                "block": "vlan",
+                "arg-discriminator": "\n",
+                "arg-value-discriminator": " "
+            },
+            "interface": {
+                "id": "interface",
+                "relevant": "Ethernet",
+                "description": "description",
+                "entrydisc": "",
+                "block": "interface",
+                "arg-discriminator": "\n",
+                "arg-value-discriminator": " "
+            },
+            "switchport": {
+                "ids": "interface",
+                "ids-disc": "",
+                "switchport": "switchport",
+                "entrydisc": ""
+            },
+            "device": {
+                "name": "hostname",
+                "model": ""
+            }
+        }
+    }

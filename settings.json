@@ -1,0 +1,23 @@
+{
+    "API-KEY": "NETVISION_API_KEY",
+    "Additional-Settings-Files": {
+        "db-settings": {
+            "location-of-file": "Settings/db-settings.json"
+        },
+        "ssl-certificate": {
+            "location-of-file": "Settings/cert-settings.json"
+        },
+        "switch-live-access": {
+            "location-of-file": "Settings/live-access.json"
+        },
+        "tftp-settings": {
+            "location-of-file": "Settings/tftp.json"
+        }
+    },
+    "Config-Files-Blueprints": "Config-files/config-file-blueprints",
+    "Config-Files-Path": "Config-files",
+    "cycle-time": "7D 12h",
+    "logging-level": 3,
+    "logging-location": "logs/",
+    "write-logs-to-file": 1
+}

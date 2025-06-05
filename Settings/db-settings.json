@@ -1,0 +1,27 @@
+{
+    "db-settings": {
+        "Database-Name": "NetVisionDB",
+        "Database-URL": "192.168.0.200",
+        "Database-credentials": {
+            "password": "NETVISION_DB_PASS",
+            "username": "NETVISION_DB_USER"
+        },
+        "Full-Port-Id-RESET": 0,
+        "Tables": {
+            "Switch": {
+                "table-name": "switch",
+                "switch-id": "id_Switch",
+                "switch-name": "hostname",
+                "switch-model": "modell",
+                "switch-port-number": "no_fports"
+            },
+            "Port": {
+                "table-name": "port",
+                "switch-id": "id_Switch",
+                "port-name": "portname",
+                "port-description": "description",
+                "port-switchport": "portmode"
+            }
+        }
+    }
+}

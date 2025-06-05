@@ -1,0 +1,42 @@
+{
+        "block": "!",
+        "check": {
+            "1": "interface Ethernet",
+            "2": "switchport",
+            "3": "hostname"
+        },
+        "structure": {
+            "1": "spanning-tree",
+            "2": "vlan",
+            "3": "interface"
+        },
+        "prefix": {
+            "vlan": {
+                "id": "vlan",
+                "description": "name",
+                "entrydisc": "",
+                "block": "vlan",
+                "arg-discriminator": "\n",
+                "arg-value-discriminator": " "
+            },
+            "interface": {
+                "id": "interface",
+                "relevant": "Ethernet",
+                "description": "description",
+                "entrydisc": "",
+                "block": "interface",
+                "arg-discriminator": "\n",
+                "arg-value-discriminator": " "
+            },
+            "switchport": {
+                "ids": "interface",
+                "ids-disc": "",
+                "switchport": "switchport",
+                "entrydisc": ""
+            },
+            "device": {
+                "name": "hostname",
+                "model": ""
+            }
+        }
+    }

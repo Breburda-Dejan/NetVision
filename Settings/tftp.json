@@ -1,0 +1,6 @@
+{
+    "tftp-settings": {
+        "ip-address": "192.168.0.202",
+        "config-files-path": "configs/"
+    }
+}

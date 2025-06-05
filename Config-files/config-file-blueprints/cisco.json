@@ -1,0 +1,42 @@
+{
+    "block": "!",
+    "check": {
+        "1": "interface",
+        "3": "switchport",
+        "4": "hostname",
+        "5": "GigabitEthernet"
+    },
+    "structure": {
+        "1": "ip dhcp excluded-address",
+        "2": "vlan",
+        "3": "interface"
+    },
+    "prefix": {
+        "interface": {
+            "id": "interface",
+            "relevant": "Ethernet",
+            "description": "description",
+            "entrydisc": "",
+            "block": "interface",
+            "arg-discriminator": "\n",
+            "arg-value-discriminator": " "
+        },
+        "switchport": {
+            "ids": "interface",
+            "ids-disc": "",
+            "switchport": "switchport",
+            "entrydisc": ""
+        },
+        "vlan": {
+            "id": "vlan",
+            "description": "name",
+            "entrydisc": "",
+            "block": "vlan",
+            "arg-discriminator": "\n",
+            "arg-value-discriminator": " "
+        },
+        "device": {
+            "name": "hostname"
+        }
+    }
+}

@@ -1,0 +1,10 @@
+{
+    "switch-live-access": {
+        "Example-hostname": {
+            "ip-address": "192.168.0.201",
+            "username": "admin",
+            "password": "admin",
+            "enable-password": "12345678"
+        }
+    }
+}

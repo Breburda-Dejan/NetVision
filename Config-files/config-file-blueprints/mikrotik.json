@@ -1,0 +1,42 @@
+{
+        "block": "/",
+        "check": {
+            "1": "/interface",
+            "2": "/ip",
+            "3": "/system clock"
+        },
+        "structure": {
+            "1": "/interface bridge",
+            "2": "/interface vlan",
+            "3": "/interface bridge port"
+        },
+        "prefix": {
+            "vlan": {
+                "id": "vlan-id",
+                "description": "name",
+                "entrydisc": "\n",
+                "block": "interface vlan",
+                "arg-discriminator": " ",
+                "arg-value-discriminator": "="
+            },
+            "interface": {
+                "id": "name##or##default-name",
+                "relevant": "ether",
+                "description": "comment",
+                "entrydisc": "\n",
+                "block": "interface ethernet",
+                "arg-discriminator": " ",
+                "arg-value-discriminator": "="
+            },
+            "switchport": {
+                "ids": "",
+                "ids-disc": "",
+                "switchport": "",
+                "entrydisc": ""
+            },
+            "device": {
+                "name": "set name=",
+                "model": ""
+            }
+        }
+    }
