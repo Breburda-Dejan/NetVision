@@ -55,7 +55,6 @@ cd netvision
 
 ```bash
 python -m venv venv
-source venv/bin/activate  # Unter Windows: venv\Scripts\activate
 ```
 
 ---
@@ -63,26 +62,12 @@ source venv/bin/activate  # Unter Windows: venv\Scripts\activate
 ### Schritt 3: Bibliotheken installieren
 
 ```bash
-pip install -r requirements.txt
+venv/bin/pip install -r requirements.txt
 ```
 
 ---
 
-### Schritt 4: Umgebungsvariablen konfigurieren
-
-Erstelle oder bearbeite die Datei `.env` im Projektverzeichnis:
-
-```env
-NETVISION_API_KEY=your_api_key
-NETVISION_DB_PASS=your_DB_Password
-NETVISION_DB_USER=your_DB_Username
-```
-
-Ersetze die Platzhalter mit deinen echten Werten.
-
----
-
-### Schritt 5: Datenbank initialisieren
+### Schritt 4: Datenbank initialisieren
 
 Stelle sicher, dass der MySQL-Server läuft. Melde dich an:
 
@@ -121,7 +106,7 @@ CREATE TABLE port (
 
 ---
 
-### Schritt 6: Selbstsigniertes Zertifikat erstellen
+### Schritt 5: Selbstsigniertes Zertifikat erstellen
 
 Zertifikatsordner erstellen (falls nicht vorhanden):
 
@@ -145,9 +130,23 @@ openssl req -new -x509 -key Cert/key.pem -out Cert/cert.pem -days 365
 
 ---
 
-### Schritt 7: Einstellungen anpassen (optional)
+### Schritt 6: Umgebungsvariablen konfigurieren
 
-Je nach Umgebung und Anwendungsfall können Konfigurationswerte angepasst werden.
+Erstelle oder bearbeite die Datei `.env` im Projektverzeichnis:
+
+```env
+NETVISION_API_KEY=your_api_key
+NETVISION_DB_PASS=your_DB_Password
+NETVISION_DB_USER=your_DB_Username
+```
+
+Ersetze die Platzhalter mit deinen echten Werten.
+
+---
+
+### Schritt 7: Einstellungen anpassen
+
+Es müssen Einstellungen wie die Datenbank_URL und die IP-adresse des TFTP-Servers angepasst werden.
 
 ---
 
@@ -160,7 +159,7 @@ Lege deine Switch-Konfigurationsdateien im Ordner `/Config-files` ab.
 ### Schritt 9: Server starten
 
 ```bash
-python NetVision-Server.py
+venv/bin/python NetVision-Server.py
 ```
 
 ---
