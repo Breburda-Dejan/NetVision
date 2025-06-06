@@ -55,7 +55,6 @@ cd netvision
 
 ```bash
 python -m venv venv
-source venv/bin/activate  # Unter Windows: venv\Scripts\activate
 ```
 
 ---
@@ -63,7 +62,7 @@ source venv/bin/activate  # Unter Windows: venv\Scripts\activate
 ### Schritt 3: Bibliotheken installieren
 
 ```bash
-pip install -r requirements.txt
+venv/bin/pip install -r requirements.txt
 ```
 
 ---
@@ -160,7 +159,7 @@ Lege deine Switch-Konfigurationsdateien im Ordner `/Config-files` ab.
 ### Schritt 9: Server starten
 
 ```bash
-python NetVision-Server.py
+venv/pin/python NetVision-Server.py
 ```
 
 ---
