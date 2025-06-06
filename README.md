@@ -160,7 +160,7 @@ Lege deine Switch-Konfigurationsdateien im Ordner `/Config-files` ab.
 ### Schritt 9: Server starten
 
 ```bash
-python DA_Server.py
+python NetVision-Server.py
 ```
 
 ---

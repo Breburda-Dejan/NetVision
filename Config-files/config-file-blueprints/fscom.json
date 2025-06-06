@@ -12,14 +12,6 @@
             "3": "vlan"
         },
         "prefix": {
-            "vlan": {
-                "id": "vlan",
-                "description": "name",
-                "entrydisc": "",
-                "block": "vlan",
-                "arg-discriminator": "\n",
-                "arg-value-discriminator": " "
-            },
             "interface": {
                 "id": "interface",
                 "relevant": "Ethernet",

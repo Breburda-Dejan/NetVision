@@ -17,7 +17,7 @@
     "Config-Files-Blueprints": "Config-files/config-file-blueprints",
     "Config-Files-Path": "Config-files",
     "cycle-time": "7D 12h",
-    "logging-level": 3,
+    "logging-level": 2,
     "logging-location": "logs/",
     "write-logs-to-file": 1
 }

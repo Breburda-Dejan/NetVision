@@ -11,14 +11,6 @@
             "3": "/interface bridge port"
         },
         "prefix": {
-            "vlan": {
-                "id": "vlan-id",
-                "description": "name",
-                "entrydisc": "\n",
-                "block": "interface vlan",
-                "arg-discriminator": " ",
-                "arg-value-discriminator": "="
-            },
             "interface": {
                 "id": "name##or##default-name",
                 "relevant": "ether",

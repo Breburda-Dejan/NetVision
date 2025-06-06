@@ -1,3 +1,25 @@
+"""
+ooooo      ooo               .   oooooo     oooo  o8o            o8o
+`888b.     `8'             .o8    `888.     .8'   `"'            `"'
+ 8 `88b.    8   .ooooo.  .o888oo   `888.   .8'   oooo   .oooo.o oooo   .ooooo.  ooo. .oo.
+ 8   `88b.  8  d88' `88b   888      `888. .8'    `888  d88(  "8 `888  d88' `88b `888P"Y88b
+ 8     `88b.8  888ooo888   888       `888.8'      888  `"Y88b.   888  888   888  888   888
+ 8       `888  888    .o   888 .      `888'       888  o.  )88b  888  888   888  888   888
+o8o        `8  `Y8bod8P'   "888"       `8'       o888o 8""888P' o888o `Y8bod8P' o888o o888o
+
+============================================================================================
+File:           NetVision-Server.py
+Description:    This Program periodically reads Switch-Configuration-files and stores relevant information into a Database.
+Author:         Breburda Dejan
+Version:        1.0
+
+License:        MIT License
+                https://opensource.org/licenses/MIT
+
+Github:         https://github.com/Breburda-Dejan/NetVision
+Contact:        dejan@breburda.at
+"""
+
 import datetime
 import os
 import socket
@@ -13,10 +35,11 @@ import threading
 import paramiko
 
 api_key = None
-db_pass = None
-db_user = None
+db_password = None
+db_username = None
 db_connection = None
 db_cursor = None
+
 logsenabled = True
 
 COLORS = {
@@ -70,7 +93,6 @@ def tftp_download(server_ip, remote_file, local_file) -> None:
 
     except Exception as e:
         log(f"Error downloading {remote_file}: {e}","high",2)
-
     finally:
         sock.close()
 
@@ -78,7 +100,6 @@ def tftp_download(server_ip, remote_file, local_file) -> None:
 def connect_to_switch_with_ssh(switch_ip:str,switch_user:str,switch_password:str):
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-
     try:
         client.connect(
             switch_ip,
@@ -265,6 +286,8 @@ def auto_fix(what_to_fix:str) -> bool:
                 Settings["write-logs-to-file"] = False
             return True
 
+
+
     except:
         log("ERROR in AUTO-FIX", "high",1)
         error_exit()
@@ -272,14 +295,14 @@ def auto_fix(what_to_fix:str) -> bool:
 
 
 def load_env_values() -> None:
-    global db_user,db_pass,api_key
+    global db_username,db_password,api_key
     try:
         log("Loading environment variables", "low",2)
         p = os.getenv(Settings["db-settings"]["Database-credentials"]["password"])
         u = os.getenv(Settings["db-settings"]["Database-credentials"]["username"])
         a = os.getenv(Settings["API-KEY"])
-        if p: db_pass = p
-        if u: db_user = u
+        if p: db_password = p
+        if u: db_username = u
         if a: api_key = a
 
     except:
@@ -287,7 +310,7 @@ def load_env_values() -> None:
 
 
 def strtobool(string:str) -> bool:
-    if string.lower() in ('yes', 'true', 't', 'y', '1'):
+    if string.lower() in ('yes', 'true', 't', 'y', 'ja', 'j', '1'):
         return True
     else:
         return False
@@ -315,12 +338,11 @@ def load_switch_model_blueprints() -> None:
 def connect_to_databse() -> bool:        # Mit Datenbank verbinden
     global db_connection,db_cursor
     log("Connecting to Database...", "low", 2)
-    #return True
     try:
         db_connection = mysql.connector.connect(
             host=Settings["db-settings"]["Database-URL"],
-            user=db_user,
-            password=db_pass,
+            user=db_username,
+            password=db_password,
             database=Settings["db-settings"]["Database-Name"]
         )
         db_cursor = db_connection.cursor()
@@ -328,10 +350,10 @@ def connect_to_databse() -> bool:        # Mit Datenbank verbinden
     except:
         log("Could not connect to MySQL-Database", "high", 1)
         return False
-        #return True
 
 
 def close_db_connection() -> None:
+    global db_connection,db_cursor
     log("Closing Database Connection...","low",2)
     try:
         db_cursor.close()
@@ -385,7 +407,8 @@ def Port_Critical_ID_reset() -> None:
             reset_sql = f"DELETE FROM {port_table_name}; ALTER TABLE {port_table_name} AUTO_INCREMENT = 1;"
             db_cursor.execute(reset_sql)
             log("Full RESET Done!","medium",1)
-            Settings["db-settings"]["Full-Port-Id-RESET"] = False
+            Settings["db-settings"]["Full-Port-Id-RESET"] = 0
+            save_settings()
             close_db_connection()
     except:
         log("ERROR while resetting Port-ids", "high",1)
@@ -407,9 +430,7 @@ def insert_port(switchid:int,name:str,description:str = None,portmode:str = None
         if lastid >= 2_147_480_000:
             log("Warning: ID is reaching critical high Value! putting Full RESET in Program que ","medium",1)
             Settings["Full-Port-Id-RESET"] = True
-            return False
-        return True
-    except:
+    except Exception as e:
         log(f"ERROR inserting port {name}", "high", 1)
         return False      #bad request
 
@@ -573,10 +594,6 @@ def extract_information(filepath: str) -> dict[str:dict[str:str], str:dict[str:s
                     else:
                         interface = args[interface_prefix_id].strip()
 
-
-
-
-
                     try:
                         log(f"Getting description of Interface: {interface}","low",3)
                         description: str = args[SearchCriteria[manufacture]["prefix"]["interface"]["description"]].strip()
@@ -609,38 +626,6 @@ def extract_information(filepath: str) -> dict[str:dict[str:str], str:dict[str:s
                     extracted_data["Interface"][interface]["Extra-information"] = extra_information
                 except:
                     pass
-
-        # get vlan and information
-        # Disabled
-        if block.strip().startswith(SearchCriteria[manufacture]["prefix"]["vlan"]["block"]) and 1 == 0:
-            log(f"Block {i} is an vlan-block!", "low", 3)
-            vlan: str = ""
-            entrys: list[str] = []
-            if SearchCriteria[manufacture]["prefix"]["vlan"]["entrydisc"] != "":
-                entrys = block.split(SearchCriteria[manufacture]["prefix"]["vlan"]["entrydisc"])
-            else:
-                entrys.append(block)
-
-            for entry in entrys:
-                try:
-                    log("Getting arguments from Vlan-entry","low",3)
-                    args: dict[str:str] = {}
-                    for arg in entry.strip().split(SearchCriteria[manufacture]["prefix"]["vlan"]["arg-discriminator"]):
-                        try:
-                            args[arg.strip().split(SearchCriteria[manufacture]["prefix"]["vlan"]["arg-value-discriminator"])[0]] = " ".join(arg.strip().split(SearchCriteria[manufacture]["prefix"]["vlan"]["arg-value-discriminator"])[1:])
-                        except:
-                            pass
-                    vlan = args[SearchCriteria[manufacture]["prefix"]["vlan"]["id"]]
-                    try:
-                        log(f"Getting description from Vlan-entry: {vlan}", "low",3)
-                        description: str = args[SearchCriteria[manufacture]["prefix"]["vlan"]["description"]]
-                    except:
-                        log(f"No description for this Vlan: {vlan}", "medium",3)
-                        description: str = ""
-                    extracted_data["VLAN"][vlan] = {}
-                    extracted_data["VLAN"][vlan]["Description"] = description
-                except:
-                    pass #
 
     # get geräteinformationen
     extracted_data["Geraeteinformationen"]["Manufacture"] = manufacture
@@ -698,10 +683,10 @@ def wait_time(time: str) -> int:
         error_exit()
 
 
-
 def enablelogs(enable):
     global logsenabled,Settings
     logsenabled = enable
+
 
 def log(message:str, priority:str,loglevel:int) -> None:
     global app,logs,logsenabled,Settings
@@ -729,7 +714,7 @@ def log(message:str, priority:str,loglevel:int) -> None:
 
 
 def error_exit() -> None:
-    log("Exited due to error","high",1)
+    log("Exited due to error","high",0)
     exit(1)
 
 
@@ -795,24 +780,28 @@ run = False
 cycle_end_tag = False
 planed_interrupt = False
 cycle:int = 0
-start_of_cycle:float = 0.0
+end_of_cycle:float = 0.0
 time_between_cycles:int = 0
 
 def main() -> None:
-    global run,start_of_cycle,time_between_cycles,cycle,cycle_end_tag,planed_interrupt
+    global run,end_of_cycle,time_between_cycles,cycle,cycle_end_tag,planed_interrupt
     planed_interrupt = False
     cycle_end_tag = False
     load_settings()
     run = validating_settings()
     log("Start of Program", "low", 1)
-    time_between_cycles = wait_time(Settings["cycle-time"])
-    start_of_cycle = time()-time_between_cycles
+    time_between_cycles = 1
+    end_of_cycle = time()
+    try:
+        if Settings["db-settings"]["Full-Port-Id-RESET"]:
+            Port_Critical_ID_reset()
+    except:
+        pass
     while run:
-        if not time()-start_of_cycle > time_between_cycles:
+        if time()-end_of_cycle < time_between_cycles:
             continue
 
         temp_planed_interrupt = planed_interrupt
-        start_of_cycle = time()
         load_settings()
         run = validating_settings()
         if not run:
@@ -853,14 +842,10 @@ def main() -> None:
 
 
         log(f"End of cycle {cycle}", "low", 1)
-        try:
-            if Settings["db-settings"]["Full-Port-Id-RESET"]:
-                Port_Critical_ID_reset()
-        except:
-            pass
         save_settings()
         time_between_cycles = wait_time(Settings["cycle-time"])
         cycle += 1
+        end_of_cycle = time()
         log(f"Sleeping for {time_between_cycles}s", "medium", 1)
 
     if not planed_interrupt:
@@ -907,6 +892,7 @@ def restartServer():
         stopServer()
         wait_until_programm_end()
         sleep(0.5)
+        load_dotenv()
         startServer()
         return jsonify({"Response":"Server restarted"}),200
     except Exception as e:
@@ -1026,3 +1012,37 @@ if __name__ == '__main__':
         #app.run(host="0.0.0.0",prot=5000)
     else:
         log("ERROR, not able to get API-KEY","high",1)
+
+
+
+
+
+
+
+
+
+
+"""
+MIT License
+
+Copyright (c) 2025 Breburda Dejan
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights  
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell     
+copies of the Software, and to permit persons to whom the Software is         
+furnished to do so, subject to the following conditions:                      
+
+The above copyright notice and this permission notice shall be included in    
+all copies or substantial portions of the Software.                           
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR    
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,      
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE   
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER       
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN    
+THE SOFTWARE.
+
+"""
