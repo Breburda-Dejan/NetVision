@@ -18,8 +18,8 @@ License:        MIT License
 
 Github:         https://github.com/Breburda-Dejan/NetVision
 Contact:        dejan@breburda.at
+============================================================================================
 """
-
 import datetime
 import os
 import socket
