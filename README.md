@@ -8,6 +8,7 @@
 
 * [Installation Guide](#installation-guide)
 * [Configuration](#configuration)
+* [API](#api)
 
 ---
 
@@ -312,3 +313,229 @@ Live access is currently supported only for Cisco devices.
 * `"ip-address"` → IP address of the switch
 * `"username"` / `"password"` → login credentials
 * `"enable-password"` → enable secret of the switch
+
+
+---
+# API
+
+- [Start](#post-start)  
+- [Stop](#post-stop)  
+- [Restart](#post-restart)  
+- [Status](#get-status)  
+- [Logs](#get-logsnumber_of_logs_to_get)
+- [Settings GET](#get-settings)
+- [Settings POST](#post-settings)
+
+
+
+### `POST /start`
+
+__Description:__  
+Starts the main-program if not running
+
+__Response:__  
+```json
+{
+  "Response": "Started the Main thread"
+}
+```
+
+### `POST /stop`
+
+__Description:__  
+Stops the main-program if running
+
+__Response:__  
+```json
+{
+  "Response": "Stopped the Main thread"
+}
+```
+
+### `POST /restart`
+
+__Description:__  
+Restarts the main-program
+
+__Response:__  
+```json
+{
+  "Response": "Server restarted"
+}
+```
+
+
+### `GET /status`
+
+__Description:__  
+Returns a general status of the Program
+
+__Response:__  
+```json
+{
+  "Cycle": 1,
+  "Last-5-logs": [
+    {
+      "message": "Sending Status to GUI",
+      "priority": "low",
+      "time": "2025-06-07 15:00:32.146"
+    },
+    {
+      "message": "Sending Status to GUI",
+      "priority": "low",
+      "time": "2025-06-07 15:00:34.800"
+    },
+    {
+      "message": "Sending Status to GUI",
+      "priority": "low",
+      "time": "2025-06-07 15:00:37.157"
+    },
+    {
+      "message": "Sending Status to GUI",
+      "priority": "low",
+      "time": "2025-06-07 15:00:39.546"
+    },
+    {
+      "message": "Sending Status to GUI",
+      "priority": "low",
+      "time": "2025-06-07 15:00:41.950"
+    }
+  ],
+  "Next-Cycle-In": 604781.2143273354,
+  "Running": true
+}
+```
+
+
+### `GET /logs/<number_of_logs_to_get>`
+
+__Description:__  
+Returns the last `number_of_logs_to_get` Logs
+
+__Response:__  
+```json
+{
+  "Logs": [
+    {
+      "message": "Saving settings to Settings/live-access.json",
+      "priority": "low",
+      "time": "2025-06-07 15:04:48.129"
+    },
+    {
+      "message": "Saving settings to Settings/tftp.json",
+      "priority": "low",
+      "time": "2025-06-07 15:04:48.130"
+    },
+    {
+      "message": "Saving settings to settings.json",
+      "priority": "low",
+      "time": "2025-06-07 15:04:48.130"
+    }
+  ]
+}
+```
+
+
+### `GET /settings`
+
+__Description:__  
+Returns all Settings
+
+__Response:__  
+```json
+{
+  "Additional-Settings-Files": {
+    "db-settings": {
+      "location-of-file": "Settings/db-settings.json"
+    },
+    "ssl-certificate": {
+      "location-of-file": "Settings/cert-settings.json"
+    },
+    "switch-live-access": {
+      "location-of-file": "Settings/live-access.json"
+    },
+    "tftp-settings": {
+      "location-of-file": "Settings/tftp.json"
+    }
+  },
+  "Config-Files-Blueprints": "Config-files/config-file-blueprints",
+  "Config-Files-Path": "Config-files",
+  "as-keys": {
+    "db-settings": "Settings/db-settings.json",
+    "ssl-certificate": "Settings/cert-settings.json",
+    "switch-live-access": "Settings/live-access.json",
+    "tftp-settings": "Settings/tftp.json"
+  },
+  "cycle-time": "7D",
+  "db-settings": {
+    "Database-Name": "NetVisionDB",
+    "Database-URL": "192.168.0.200",
+    "Database-credentials": {
+      "password": "NETVISION_DB_PASS",
+      "username": "NETVISION_DB_USER"
+    },
+    "Full-Port-Id-RESET": 0,
+    "Tables": {
+      "Port": {
+        "port-description": "description",
+        "port-name": "portname",
+        "port-switchport": "portmode",
+        "switch-id": "id_Switch",
+        "table-name": "port"
+      },
+      "Switch": {
+        "switch-id": "id_Switch",
+        "switch-model": "modell",
+        "switch-name": "hostname",
+        "switch-port-number": "no_fports",
+        "table-name": "switch"
+      }
+    }
+  },
+  "logging-level": 1,
+  "logging-location": "logs/",
+  "ssl-certificate": {
+    "cert.pem": "Cert/cert.pem",
+    "key.pem": "Cert/key.pem"
+  },
+  "switch-live-access": {
+    "Example-hostname": {
+      "enable-password": "12345678",
+      "ip-address": "192.168.0.202",
+      "password": "admin",
+      "username": "admin"
+    }
+  },
+  "tftp-settings": {
+    "config-files-path": "configs/",
+    "ip-address": "192.168.0.201"
+  },
+  "write-logs-to-file": 1
+}
+```
+
+
+### `POST /settings`
+
+__Description:__  
+Changes settings specified in the Body of the Request
+
+__Example-Body:__
+```json
+{
+  "db-settings": {
+    "Database-credentials": {
+      "password": "NETVISION_DB_PASS1"
+    }
+  }
+}
+```
+- This will only change the password of the Database
+
+__Response:__  
+```json
+{
+    "Response": "Updated Settings successfully"
+}
+```
+
